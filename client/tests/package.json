@@ -1,0 +1,16 @@
+{
+  "name": "todomvc-browser-tests",
+  "description": "An automated test suite for TodoMVC",
+  "private": true,
+  "devDependencies": {
+    "chromedriver": "^2.21.2",
+    "drool": "0.4.0",
+    "mocha": "*",
+    "optimist": "^0.6.1",
+    "selenium-webdriver": "~2.53.1",
+    "webdriver-manager": "~10.0.4"
+  },
+  "scripts": {
+    "test": "mocha allTests.js --no-timeouts --reporter spec"
+  }
+}
