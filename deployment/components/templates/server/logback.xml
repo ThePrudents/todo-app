@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <appender name="rollingFile-server" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/server.log</file>
+        <encoder>
+            <pattern>%d [%thread] [%class] %5p - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>logs/archive/server.%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>20</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <logger name="ch.qos.logback" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="rollingFile-server"/>
+    </root>
+</configuration>

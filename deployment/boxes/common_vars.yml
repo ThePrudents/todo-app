@@ -1,0 +1,30 @@
+---
+  is_feature: true
+  instance_id: "{{feature_name.replace('.','_')}}"
+
+  top_level_domain: "todo.dev"
+  base_domain: "{{instance_id}}.{{top_level_domain}}"
+
+  install_base_dir: /opt/todo-app
+  install_pr_list_dir: "{{install_base_dir}}/pr_list"
+
+  install_dir: "{{install_base_dir}}/{{instance_id}}"
+  install_server_dir: "{{install_dir}}/server"
+
+  jenkins_url: "http://10.10.0.11:8080"
+  artifacts_base_url: "{{jenkins_url}}/job/{{jenkins_job_name}}"
+  artifacts_folder: "{{jenkins_build_number}}/artifact"
+
+  server_fat_jar_name: server.jar
+  server_fat_jar_url: "{{artifacts_base_url}}/{{artifacts_folder}}/server/{{server_fat_jar_name}}"
+
+  server_upstart_name: "todo-app-server-{{instance_id}}"
+  server_starting_port: 8080
+
+  server_url_health_check: "http://127.0.0.1:{{server_port_number}}/api/v1/healthcheck"
+
+  install_client_dir: "{{install_dir}}/client"
+  client_artifact_name: client.tgz
+  client_artifact_url: "{{artifacts_base_url}}/{{artifacts_folder}}/client/{{client_artifact_name}}"
+
+  client_url_health_check: "http://{{base_domain}}/index.html"

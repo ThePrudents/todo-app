@@ -1,0 +1,36 @@
+---
+  - name: Ports | Provisioning a feature ?
+    set_fact:
+      instance_id: latest
+      base_domain: "{{top_level_domain}}"
+      server_port_number: "{{server_starting_port}}"
+      is_feature: false
+    when: feature_name is undefined or not feature_name
+
+  - name: Ports | Does the instance already exist ?
+    stat: path={{install_server_dir}}/application.conf
+    register: instance
+    when: is_feature
+
+  - name: Ports | Set instanceExists
+    set_fact: instanceExists={{instance.stat.exists}}
+    when: is_feature
+
+  - name: Ports | Get server port if instance exists
+    shell: chdir={{install_server_dir}} grep port application.conf | sed 's/[^0-9]//g'
+    register: existing_server_port
+    when: is_feature and instanceExists
+
+  - name: Ports | Find next available port for Server (no existing instance present)
+    shell: ss -tln | awk 'NR > 1{gsub(/.*:/,"",$4); print $4}' | sort -un |  awk -v n={{server_starting_port + 1}} '$0 < n {next}; $0 == n {n++; next}; {exit}; END {print n}'
+    register: new_server_port
+    when: is_feature and not instanceExists
+    become: yes
+
+  - name: Ports | Set server_port_number for the existing instance
+    set_fact: server_port_number="{{existing_server_port.stdout}}"
+    when: is_feature and not existing_server_port|skipped
+
+  - name: Ports | Set server_port_number for the new instance
+    set_fact: server_port_number="{{new_server_port.stdout}}"
+    when: is_feature and not new_server_port|skipped

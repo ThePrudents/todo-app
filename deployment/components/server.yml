@@ -1,0 +1,50 @@
+---
+  - name: Server | Remove dir
+    file: path="{{install_server_dir}}" state=absent
+
+  - name: Server | Create dir
+    file: path="{{install_server_dir}}" state=directory mode=0755
+
+  - name: Server | Fetch fat jar
+    shell: "chdir={{install_server_dir}} curl {{server_fat_jar_url}} > {{server_fat_jar_name}}"
+
+  - name: Server | Install base packages
+    apt: pkg={{item}} state=present
+    with_items:
+      - unzip
+      - daemon
+    become: yes
+
+  - name: Server | Extract fat jar
+    command: "chdir={{install_server_dir}} unzip {{server_fat_jar_name}}"
+
+  - name: Server | Remove fat jar
+    file: path="{{install_server_dir}}/{{server_fat_jar_name}}" state=absent
+
+  - name: Server | Application config
+    template: src="{{root_dir}}/components/templates/server/application.conf.j2" dest="{{install_server_dir}}/application.conf"
+
+  - name: Server | Logback config
+    template: src="{{root_dir}}/components/templates/server/logback.xml" dest="{{install_server_dir}}/logback.xml"
+
+  - name: Server | Startup script
+    template: src="{{root_dir}}/components/templates/server/start.j2" dest="{{install_server_dir}}/start" mode=755
+
+  - name: Server | Copy upstart script
+    template: src={{root_dir}}/components/templates/server/upstart.conf.j2 dest=/etc/init/{{server_upstart_name}}.conf
+    become: yes
+
+  - name: Server | Restart
+    service: name={{server_upstart_name}} state=restarted
+    become: yes
+
+  - name: Server | Wait to start
+    uri:
+      url: "http://{{ ansible_hostname }}:{{server_port_number}}"
+      status_code: 200
+    register: result
+    until: result.status == 200
+    retries: 30
+    delay: 1
+
+  - debug: msg="Server port is {{server_port_number}}."

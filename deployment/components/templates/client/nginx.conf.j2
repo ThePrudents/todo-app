@@ -1,0 +1,36 @@
+upstream server-{{ instance_id }} {
+  server localhost:{{server_port_number}};
+}
+
+server  {
+  listen 80;
+  server_name {{base_domain}};
+
+  access_log /var/log/nginx/{{instance_id}}-access.log;
+  error_log /var/log/nginx/{{instance_id}}-error.log;
+
+  root {{install_client_dir}};
+
+  location / {
+    expires -1;
+    try_files $uri /index.html;
+  }
+
+  location /api {
+    proxy_pass http://server-{{ instance_id }};
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+  }
+
+  charset utf-8;
+  sendfile on;
+
+  location ~* \.(?:css|js)$ {
+    expires 1y;
+    access_log off;
+    add_header Cache-Control "public";
+  }
+
+  # Enable Gzip compressed.
+  gzip on;
+}

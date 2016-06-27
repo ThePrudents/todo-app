@@ -1,0 +1,20 @@
+node {
+  stage "Checkout"
+  checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/ThePrudents/todo-app.git']]])
+
+  stage "Build Client"
+  sh "./build-client.sh"
+
+  stage "Build Server"
+  sh "./build-server.sh"
+
+  stage "Unit tests"
+  sh "./test.sh"
+
+  stage "Package"
+  sh "./package.sh"
+  archive 'client/client*.tgz, server/server*.jar'
+
+  stage "Deploy"
+  sh "./deploy.sh ${env.JOB_NAME} ${env.BUILD_NUMBER}"
+}

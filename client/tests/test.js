@@ -22,14 +22,14 @@ module.exports.todoMVCTest = function (frameworkName, baseUrl, speedMode, laxMod
 				.then(function () {
 					if (done instanceof Function) {
 						done();
-					};
+					}
 				});
 		}
 
 		function launchBrowser(done) {
 			browser = new webdriver.Builder()
 				.withCapabilities({browserName: browserName})
-				.usingServer('http://127.94.0.1:4444/wd/hub')
+				.usingServer('http://127.0.0.1:4444/wd/hub')
 				.build();
 
 			browser.get(baseUrl);
@@ -41,7 +41,7 @@ module.exports.todoMVCTest = function (frameworkName, baseUrl, speedMode, laxMod
 				.then(function () {
 					if (done instanceof Function) {
 						done();
-					};
+					}
 				});
 		}
 
@@ -62,7 +62,7 @@ module.exports.todoMVCTest = function (frameworkName, baseUrl, speedMode, laxMod
 				.then(function () {
 					if (done instanceof Function) {
 						done();
-					};
+					}
 				});
 		}
 
@@ -80,7 +80,7 @@ module.exports.todoMVCTest = function (frameworkName, baseUrl, speedMode, laxMod
 								if (nonCompleteItems.length > 0) {
 									return page.clickMarkAllCompletedCheckBox();
 								}
-							})
+							});
 
 						return page.clickClearCompleteButton();
 					})
@@ -227,57 +227,57 @@ module.exports.todoMVCTest = function (frameworkName, baseUrl, speedMode, laxMod
 			});
 		});
 
-		test.describe('Editing', function (done) {
-			test.beforeEach(function (done) {
-				createStandardItems();
-				page.doubleClickItemAtIndex(1)
-					.then(function () { done(); });
-			});
-
-			test.it('should focus the input', function (done) {
-				testOps.assertInputFocused();
-				testOps.assertNewInputNotFocused()
-					.then(function () { done(); });
-			});
-
-			test.it('should hide other controls when editing', function (done) {
-				testOps.assertItemToggleIsHidden(1);
-				testOps.assertItemLabelIsHidden(1)
-					.then(function () { done(); });
-			});
-
-			test.it('should save edits on enter', function (done) {
-				page.editItemAtIndex(1, 'buy some sausages' + webdriver.Key.ENTER);
-				testOps.assertItems([TODO_ITEM_ONE, 'buy some sausages', TODO_ITEM_THREE])
-					.then(function () { done(); });
-			});
-
-			test.it('should save edits on blur', function (done) {
-				page.editItemAtIndex(1, 'buy some sausages');
-				// click a toggle button so that the blur() event is fired
-				page.toggleItemAtIndex(0);
-				testOps.assertItems([TODO_ITEM_ONE, 'buy some sausages', TODO_ITEM_THREE])
-					.then(function () { done(); });
-			});
-
-			test.it('should trim entered text', function (done) {
-				page.editItemAtIndex(1, '    buy some sausages  ' + webdriver.Key.ENTER);
-				testOps.assertItems([TODO_ITEM_ONE, 'buy some sausages', TODO_ITEM_THREE])
-					.then(function () { done(); });
-			});
-
-			test.it('should remove the item if an empty text string was entered', function (done) {
-				page.editItemAtIndex(1, webdriver.Key.ENTER);
-				testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_THREE])
-					.then(function () { done(); });
-			});
-
-			test.it('should cancel edits on escape', function (done) {
-				page.editItemAtIndex(1, 'foo' + webdriver.Key.ESCAPE);
-				testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_TWO, TODO_ITEM_THREE])
-					.then(function () { done(); });
-			});
-		});
+		// test.describe('Editing', function () {
+		// 	test.beforeEach(function (done) {
+		// 		createStandardItems();
+		// 		page.doubleClickItemAtIndex(1)
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should focus the input', function (done) {
+		// 		testOps.assertInputFocused();
+		// 		testOps.assertNewInputNotFocused()
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should hide other controls when editing', function (done) {
+		// 		testOps.assertItemToggleIsHidden(1);
+		// 		testOps.assertItemLabelIsHidden(1)
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should save edits on enter', function (done) {
+		// 		page.editItemAtIndex(1, 'buy some sausages' + webdriver.Key.ENTER);
+		// 		testOps.assertItems([TODO_ITEM_ONE, 'buy some sausages', TODO_ITEM_THREE])
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should save edits on blur', function (done) {
+		// 		page.editItemAtIndex(1, 'buy some sausages');
+		// 		// click a toggle button so that the blur() event is fired
+		// 		page.toggleItemAtIndex(0);
+		// 		testOps.assertItems([TODO_ITEM_ONE, 'buy some sausages', TODO_ITEM_THREE])
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should trim entered text', function (done) {
+		// 		page.editItemAtIndex(1, '    buy some sausages  ' + webdriver.Key.ENTER);
+		// 		testOps.assertItems([TODO_ITEM_ONE, 'buy some sausages', TODO_ITEM_THREE])
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should remove the item if an empty text string was entered', function (done) {
+		// 		page.editItemAtIndex(1, webdriver.Key.ENTER);
+		// 		testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_THREE])
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should cancel edits on escape', function (done) {
+		// 		page.editItemAtIndex(1, 'foo' + webdriver.Key.ESCAPE);
+		// 		testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_TWO, TODO_ITEM_THREE])
+		// 			.then(function () { done(); });
+		// 	});
+		// });
 
 		test.describe('Counter', function () {
 			test.it('should display the current number of todo items', function (done) {
@@ -289,113 +289,113 @@ module.exports.todoMVCTest = function (frameworkName, baseUrl, speedMode, laxMod
 			});
 		});
 
-		test.describe('Clear completed button', function () {
-			test.beforeEach(createStandardItems);
+		// test.describe('Clear completed button', function () {
+		// 	test.beforeEach(createStandardItems);
+    //
+		// 	test.it('should display the correct text', function (done) {
+		// 		page.toggleItemAtIndex(1);
+		// 		testOps.assertClearCompleteButtonText('Clear completed')
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should remove completed items when clicked', function (done) {
+		// 		page.toggleItemAtIndex(1);
+		// 		page.clickClearCompleteButton();
+		// 		testOps.assertItemCount(2);
+		// 		testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_THREE])
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should be hidden when there are no items that are completed', function (done) {
+		// 		page.toggleItemAtIndex(1);
+		// 		testOps.assertClearCompleteButtonIsVisible();
+		// 		page.clickClearCompleteButton();
+		// 		testOps.assertClearCompleteButtonIsHidden()
+		// 			.then(function () { done(); });
+		// 	});
+		// });
 
-			test.it('should display the correct text', function (done) {
-				page.toggleItemAtIndex(1);
-				testOps.assertClearCompleteButtonText('Clear completed')
-					.then(function () { done(); });
-			});
+		// test.describe('Persistence', function () {
+		// 	test.it('should persist its data', function (done) {
+		// 		function stateTest() {
+		// 			// wait until things are visible
+		// 			browser.wait(function () {
+		// 				return page.getVisibleLabelText().then(function (labels) {
+		// 					return labels.length > 0;
+		// 				});
+		// 			}, 5000);
+		// 			testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_TWO]);
+		// 			testOps.assertItemAtIndexIsCompleted(1);
+    //
+		// 			return testOps.assertItemAtIndexIsNotCompleted(0);
+		// 		}
+    //
+		// 		// set up state
+		// 		page.enterItem(TODO_ITEM_ONE);
+		// 		page.enterItem(TODO_ITEM_TWO);
+		// 		page.toggleItemAtIndex(1);
+		// 		stateTest();
+    //
+		// 		// navigate away and back again
+		// 		browser.get('about:blank');
+		// 		browser.get(baseUrl);
+    //
+		// 		// repeat the state test
+		// 		stateTest()
+		// 			.then(function () { done(); });
+		// 	});
+		// });
 
-			test.it('should remove completed items when clicked', function (done) {
-				page.toggleItemAtIndex(1);
-				page.clickClearCompleteButton();
-				testOps.assertItemCount(2);
-				testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_THREE])
-					.then(function () { done(); });
-			});
-
-			test.it('should be hidden when there are no items that are completed', function (done) {
-				page.toggleItemAtIndex(1);
-				testOps.assertClearCompleteButtonIsVisible();
-				page.clickClearCompleteButton();
-				testOps.assertClearCompleteButtonIsHidden()
-					.then(function () { done(); });
-			});
-		});
-
-		test.describe('Persistence', function () {
-			test.it('should persist its data', function (done) {
-				function stateTest() {
-					// wait until things are visible
-					browser.wait(function () {
-						return page.getVisibleLabelText().then(function (labels) {
-							return labels.length > 0;
-						});
-					}, 5000);
-					testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_TWO]);
-					testOps.assertItemAtIndexIsCompleted(1);
-
-					return testOps.assertItemAtIndexIsNotCompleted(0);
-				}
-
-				// set up state
-				page.enterItem(TODO_ITEM_ONE);
-				page.enterItem(TODO_ITEM_TWO);
-				page.toggleItemAtIndex(1);
-				stateTest();
-
-				// navigate away and back again
-				browser.get('about:blank');
-				browser.get(baseUrl);
-
-				// repeat the state test
-				stateTest()
-					.then(function () { done(); });
-			});
-		});
-
-		test.describe('Routing', function () {
-			test.beforeEach(createStandardItems);
-
-			test.it('should allow me to display active items', function (done) {
-				page.toggleItemAtIndex(1);
-				page.filterByActiveItems();
-				testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_THREE])
-					.then(function () { return done(); });
-			});
-
-			test.it('should respect the back button', function (done) {
-				page.toggleItemAtIndex(1);
-				page.filterByActiveItems();
-				page.filterByCompletedItems();
-				testOps.assertItems([TODO_ITEM_TWO]);// should show completed items
-				page.back(); // then active items
-				testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_THREE]);
-				page.back(); // then all items
-				testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_TWO, TODO_ITEM_THREE])
-					.then(function () { done(); });
-			});
-
-			test.it('should allow me to display completed items', function (done) {
-				page.toggleItemAtIndex(1);
-				page.filterByCompletedItems();
-				testOps.assertItems([TODO_ITEM_TWO]);
-				page.filterByAllItems() // TODO: why
-					.then(function () { done(); });
-			});
-
-			test.it('should allow me to display all items', function (done) {
-				page.toggleItemAtIndex(1);
-
-				// apply the other filters first, before returning to the 'all' state
-				page.filterByActiveItems();
-				page.filterByCompletedItems();
-				page.filterByAllItems();
-				testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_TWO, TODO_ITEM_THREE])
-					.then(function () { done(); });
-			});
-
-			test.it('should highlight the currently applied filter', function (done) {
-				// initially 'all' should be selected
-				testOps.assertFilterAtIndexIsSelected(0);
-				page.filterByActiveItems();
-				testOps.assertFilterAtIndexIsSelected(1);
-				page.filterByCompletedItems();
-				testOps.assertFilterAtIndexIsSelected(2)
-					.then(function () { done(); });
-			});
-		});
+		// test.describe('Routing', function () {
+		// 	test.beforeEach(createStandardItems);
+    //
+		// 	test.it('should allow me to display active items', function (done) {
+		// 		page.toggleItemAtIndex(1);
+		// 		page.filterByActiveItems();
+		// 		testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_THREE])
+		// 			.then(function () { return done(); });
+		// 	});
+    //
+		// 	test.it('should respect the back button', function (done) {
+		// 		page.toggleItemAtIndex(1);
+		// 		page.filterByActiveItems();
+		// 		page.filterByCompletedItems();
+		// 		testOps.assertItems([TODO_ITEM_TWO]);// should show completed items
+		// 		page.back(); // then active items
+		// 		testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_THREE]);
+		// 		page.back(); // then all items
+		// 		testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_TWO, TODO_ITEM_THREE])
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should allow me to display completed items', function (done) {
+		// 		page.toggleItemAtIndex(1);
+		// 		page.filterByCompletedItems();
+		// 		testOps.assertItems([TODO_ITEM_TWO]);
+		// 		page.filterByAllItems() // TODO: why
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should allow me to display all items', function (done) {
+		// 		page.toggleItemAtIndex(1);
+    //
+		// 		// apply the other filters first, before returning to the 'all' state
+		// 		page.filterByActiveItems();
+		// 		page.filterByCompletedItems();
+		// 		page.filterByAllItems();
+		// 		testOps.assertItems([TODO_ITEM_ONE, TODO_ITEM_TWO, TODO_ITEM_THREE])
+		// 			.then(function () { done(); });
+		// 	});
+    //
+		// 	test.it('should highlight the currently applied filter', function (done) {
+		// 		// initially 'all' should be selected
+		// 		testOps.assertFilterAtIndexIsSelected(0);
+		// 		page.filterByActiveItems();
+		// 		testOps.assertFilterAtIndexIsSelected(1);
+		// 		page.filterByCompletedItems();
+		// 		testOps.assertFilterAtIndexIsSelected(2)
+		// 			.then(function () { done(); });
+		// 	});
+		// });
 	});
 };

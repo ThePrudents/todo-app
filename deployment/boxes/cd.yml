@@ -1,0 +1,47 @@
+---
+- hosts: todo-cd
+
+  roles:
+    - role: ThePrudents.common-langs
+      install-sbt: true
+      install-js: true
+      install-python: true
+
+    - role: ThePrudents.jenkins2
+      setup_nginx_secure_site: false
+      install-webdriver: true
+      install-prudentia: true
+
+  post_tasks:
+    - name: CD | Downgrade to Ansible 2.0 because 2.1 broke galaxy
+      command: pip install ansible==2.0.2.0
+      become: yes
+
+    - name: CD | Install common-langs role
+      command: ansible-galaxy install ThePrudents.common-langs
+      become: yes
+
+    - name: CD | Install dnsmasq
+      apt: pkg=dnsmasq state=present
+      become: yes
+      tags: dns
+
+    - name: CD | Reroute todo.dev to 10.10.0.12
+      lineinfile: dest=/etc/dnsmasq.conf regexp='.*todo\.dev.*' line='address=/todo.dev/10.10.0.12'
+      become: yes
+      tags: dns
+
+    - name: CD | Create resolver dir
+      file: path=/etc/resolver state=directory
+      become: yes
+      tags: dns
+
+    - name: CD | Use dnsmasq to resolve .dev domains
+      shell: echo "nameserver 127.0.0.1" > /etc/resolver/dev
+      become: yes
+      tags: dns
+
+    - name: CD | Restart dnsmasq
+      service: name=dnsmasq state=restarted
+      become: yes
+      tags: dns

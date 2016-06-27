@@ -244,7 +244,11 @@ module.exports = function Page(browser) {
 			return self.tryGetClearCompleteButton();
 		})
 		.then(function (clearCompleteButton) {
-			return clearCompleteButton.click();
+			try {
+				return clearCompleteButton.click();
+			} catch(e) {
+				return true;
+			}
 		});
 	};
 

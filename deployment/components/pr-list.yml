@@ -1,0 +1,31 @@
+---
+  - set_fact: pr_list_fragments_dir="{{install_pr_list_dir}}/fragments"
+
+  - name: PR | Create fragments directory
+    file: dest={{pr_list_fragments_dir}} state=directory
+
+  - name: PR | Copy first and last fragments
+    copy: src={{root_dir}}/components/templates/pr-list/{{item}} dest={{pr_list_fragments_dir}}/{{item}}
+    with_items:
+      - a.html
+      - z.html
+
+  - name: PR | Copy Nginx configuration
+    template: src={{root_dir}}/components/templates/pr-list/nginx.conf.j2 dest=/etc/nginx/sites-available/list.{{top_level_domain}}
+    become: yes
+
+  - name: PR | Enable website
+    file: src=/etc/nginx/sites-available/list.{{top_level_domain}} dest=/etc/nginx/sites-enabled/list.{{top_level_domain}} state=link force=yes
+    become: yes
+
+  - name: PR | Reload Nginx
+    service: name=nginx state=reloaded
+    become: yes
+
+  - name: PR | Generate current fragment
+    template: src={{root_dir}}/components/templates/pr-list/pr.html.j2 dest={{pr_list_fragments_dir}}/pr-{{instance_id}}.html
+
+  - name: PR | Assemble index.html and sort by build status
+    shell: "cd {{pr_list_fragments_dir}}; (cat a.html && cat `ls -t1 pr-*` && cat z.html) > ../index.html 2> /dev/null || echo"
+
+  - debug: msg="Feature '{{feature_name}}' available at '{{base_domain}}' located in '{{install_dir}}'."

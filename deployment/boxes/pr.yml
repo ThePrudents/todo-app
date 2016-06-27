@@ -1,0 +1,35 @@
+---
+- hosts: todo-app-pr
+
+  vars:
+    - root_dir: ..
+    - env: pr
+    - server_mem: 1024
+
+  vars_files:
+    - ./common_vars.yml
+
+  roles:
+    - role: ThePrudents.common-langs
+      install-jre: true
+      install-js: true
+
+  post_tasks:
+    - include: "{{root_dir}}/components/nginx.yml"
+      tags: nginx
+
+    - name: Create dir
+      file: path="{{install_base_dir}}" state=directory mode=0755 owner={{ansible_user_id}} group={{ansible_user_id}}
+      become: yes
+
+    - include: "{{root_dir}}/components/ports.yml"
+      tags: ports
+
+    - include: "{{root_dir}}/components/server.yml"
+      tags: server
+
+    - include: "{{root_dir}}/components/client.yml"
+      tags: client
+
+    - include: "{{root_dir}}/components/pr-list.yml"
+      tags: pr

@@ -1,0 +1,36 @@
+---
+  - name: Client | Remove dir
+    file: path={{install_client_dir}} state=absent
+
+  - name: Client | Create dir
+    file: dest={{install_client_dir}} state=directory
+
+  - name: Client | Fetch site artifact
+    shell: "chdir={{install_client_dir}} curl {{client_artifact_url}} > {{client_artifact_name}}"
+
+  - name: Client | Unpack website contents
+    command: tar -zxf {{client_artifact_name}}
+    args:
+      chdir: "{{install_client_dir}}"
+
+  - name: Client | Remove artifact
+    file: path="{{install_client_dir}}/{{client_artifact_name}}" state=absent
+
+  - name: Client | Copy Nginx configuration
+    template: "src={{root_dir}}/components/templates/client/nginx.conf.j2 dest=/etc/nginx/sites-available/{{base_domain}}"
+    become: yes
+
+  - name: Client | Enable website
+    file: src=/etc/nginx/sites-available/{{base_domain}} dest=/etc/nginx/sites-enabled/{{base_domain}} state=link
+    become: yes
+
+  - name: Client | Reload Nginx
+    service: name=nginx state=reloaded
+    become: yes
+
+  - name: Client | Wait Nginx port to be opened
+    shell: "sleep 10 && echo 'GET /' | nc -i 1 {{ansible_hostname}} 80"
+    become: yes
+
+  - name: Client | Health check
+    shell: /usr/bin/curl -sSf --max-time 30 {{client_url_health_check}} > /dev/null

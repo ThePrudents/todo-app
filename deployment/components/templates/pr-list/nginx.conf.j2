@@ -1,0 +1,10 @@
+server {
+  listen 80;
+  server_name list.{{top_level_domain}};
+  root {{install_pr_list_dir}};
+
+  location / {
+    expires 0;
+    index index.html;
+  }
+}

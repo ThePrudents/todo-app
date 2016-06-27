@@ -1,0 +1,14 @@
+version "0.1"
+author "The Prudents"
+description "ToDo Server {{instance_id}}"
+
+env SERVER_HOME={{install_server_dir}}
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+console log
+
+script
+	exec daemon --user={{ansible_ssh_user}} --name={{server_upstart_name}} --chdir=$SERVER_HOME --stdout=$SERVER_HOME/out.log --stderr=$SERVER_HOME/err.log -- ./start
+	emit {{server_upstart_name}}_running
+end script 

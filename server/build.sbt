@@ -1,8 +1,12 @@
-name := "dod-workshop"
+name := "todo-app"
+
+version := "0.1"
+
+organization := "ThePrudents"
+
+scalaVersion := "2.11.8"
 
 packageArchetype.java_application
-
-scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" % "akka-http-core_2.11" % "2.4.2",
